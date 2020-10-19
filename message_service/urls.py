@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from message_service.api.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('messaging/api/', include('messaging.api.urls')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('activity/', include('actstream.urls')),
+    path('activity/all', ListActivityView.as_view()),
 ]
