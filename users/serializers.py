@@ -1,12 +1,14 @@
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model,authenticate
+from django.db import transaction
+
 from rest_framework import serializers
-from django.contrib.auth import authenticate
+
 from users.models import UserProfile
 
 
-class SuperUserUsernamePasswordAuthSerializer(serializers.Serializer):
+class UsernamePasswordAuthSerializer(serializers.Serializer):
     """validates username, password and if username, password is correct and user is a superuser, it sets user attribute in validated_data"""
     username = serializers.CharField(
         label=_("Username"),
@@ -39,13 +41,8 @@ class SuperUserUsernamePasswordAuthSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg, code='authorization')
         
 
-        if user.is_superuser:
-            attrs['user'] = user
-            return attrs
-        else:
-            msg = _('Account is not a superuser')
-            raise serializers.ValidationError(msg, code='authorization')
-
+        attrs['user'] = user
+        return attrs
 
 
 class ChangePasswordSerializer(serializers.Serializer):
@@ -56,3 +53,43 @@ class ChangePasswordSerializer(serializers.Serializer):
     """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+
+class UserRegisterSerializer(serializers.Serializer):
+    username = serializers.CharField(
+        label=_("Username"),
+    )
+    first_name = serializers.CharField(required=False)
+    last_name = serializers.CharField(required=False)
+    email_address = serializers.EmailField(required=False)
+    password = serializers.CharField(
+        label=_("Password"),
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True
+    )    
+    password_again = serializers.CharField(
+        label=_("Password"),
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True
+    )
+
+    def validate(self, attrs):
+        username=attrs.get('username')
+        if get_user_model().objects.filter(username=username).exists():
+            raise serializers.ValidationError('Another user with the same username exists')
+        
+        if attrs['password'] != attrs['password_again']:
+            raise serializers.ValidationError('Passwords do not match')
+
+        return attrs
+
+    def save(self):
+        data=self.validated_data
+        with transaction.atomic():
+            user=get_user_model().objects.create_user(data['username'], data.get('email_address', None), data['password'])
+            user.first_name=data.get('first_name', None)
+            user.last_name=data.get('first_name', None)
+            user=user.save()
+        return user 

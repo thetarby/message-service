@@ -6,34 +6,38 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 
 from users.serializers import *
+from users.services import UserService
 #from users.authentications import ExpiringTokenAuthentication
+
+from actstream import action
 
 from datetime import datetime, timedelta
 import pytz
 
-class SuperUserObtainExpiringAuthToken(generics.CreateAPIView):
+class ObtainExpiringAuthToken(generics.CreateAPIView):
     """
     Given username and password it returns an access token for the api if it is superuser. No callback token authentication is required.
     This view could be used for admin logins.
     """
     authentication_classes=[]
-    serializer_class=SuperUserUsernamePasswordAuthSerializer
+    serializer_class=UsernamePasswordAuthSerializer
     
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            token, created =  Token.objects.get_or_create(user=serializer.validated_data['user'])
-            
-            utc_now = datetime.utcnow()
-            utc_now = utc_now.replace(tzinfo=pytz.utc)
-            if not created and token.created < utc_now - timedelta(hours=24):
-                token.delete()
-                token = Token.objects.create(user=serializer.validated_data['user'])
-                token.created = datetime.utcnow()
-                token.save()
-
+            token = UserService.generate_token_for_user(request.user)
             return Response({'token': token.key})
+
+        attempted_account=get_user_model().objects.filter(username=request.data['username']).first()
+        if attempted_account is not None:
+            action.send(attempted_account, verb='attempted to login but failed')
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RegisterView(generics.CreateAPIView):
+    authentication_classes=[]
+    serializer_class=UserRegisterSerializer
+
 """
 class ChangePasswordView(generics.UpdateAPIView):
     
