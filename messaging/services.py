@@ -1,11 +1,21 @@
 from messaging.models import *
-from django.db.models import Q
+from django.db.models import Q, Model
+from django.db import IntegrityError
 
 class MessageService:
     @staticmethod
+    def get_user(user):
+        if isinstance(user, str):
+            pass
+        elif isinstance(user, Model):
+            pass
+        elif isinstance(user, int):
+            pass
+
+    @staticmethod
     def send_message(from_, to_, content):
         """
-        method to send a message from a user to another user.
+        method to send a message from a user to another user. Fails if to_user blocked from_user.
 
         from_:user model that sends message
         to_:user model that receivces message
@@ -13,15 +23,17 @@ class MessageService:
 
         return value: returns two values (True, message_objects) or (False, Exception) depending on success of operation
         """
-        try:
+        if not MessageService.is_user_blocked(from_, to_):
+
+            MessageService.is_user_blocked(from_, to_)
             message=Message.objects.create(**{
                 'from_user':from_,
                 'to_user':to_,
                 'content':content
             })
             return True, message
-        except Exception as e:
-            return False, e
+        else:
+            return False, ''
 
     
     @staticmethod
@@ -54,7 +66,7 @@ class MessageService:
         if until is not None:
             date_filter &= Q(created_at__lte=until)
 
-        return (MessageService.get_sent_messages(user2, user1) | MessageService.get_received_messages(user1, user2)).order_by('created_at') 
+        return (MessageService.get_sent_messages(user1, user2) | MessageService.get_received_messages(user1, user2)).order_by('created_at') 
         
         # duck typing
         # TODO check for diffrent types
@@ -67,7 +79,7 @@ class MessageService:
 
 
     @staticmethod
-    def get_sent_messages(reciever, sender, since=None, until=None):
+    def get_sent_messages(sender, receiver, since=None, until=None):
         """
         returns
         """
@@ -79,16 +91,16 @@ class MessageService:
 
         # duck typing
         # TODO check for diffrent types
-        if hasattr(reciever,'pk'):
-            messages = Message.objects.filter(from_user=sender, to_user=reciever)
+        if hasattr(receiver,'pk'):
+            messages = Message.objects.filter(from_user=sender, to_user=receiver)
         else:
-            messages = Message.objects.filter(from_user__pk=sender, to_user__pk=reciever)
+            messages = Message.objects.filter(from_user__pk=sender, to_user__pk=receiver)
 
         return messages.filter(date_filter).order_by('created_at')
 
 
     @staticmethod
-    def get_received_messages(reciver, sender, since=None, until=None, mark_as_read=False):
+    def get_received_messages(receiver, sender, since=None, until=None, mark_as_read=False):
         """
         returns
         """
@@ -100,10 +112,10 @@ class MessageService:
 
         # duck typing
         # TODO check for diffrent types
-        if hasattr(reciver,'pk'):
-            messages = Message.objects.filter(from_user=sender, to_user=reciver)
+        if hasattr(receiver,'pk'):
+            messages = Message.objects.filter(from_user=sender, to_user=receiver)
         else:
-            messages = Message.objects.filter(from_user__pk=sender, to_user__pk=reciver)
+            messages = Message.objects.filter(from_user__pk=sender, to_user__pk=receiver)
 
         if mark_as_read:
             messages.update(is_read=True)
@@ -136,3 +148,16 @@ class MessageService:
     @staticmethod
     def get_all_received_messages_of_user(user):
         return Message.objects.filter(to_user=user)
+
+    @staticmethod
+    def block_user(blocking_user, blocked_user):
+        """
+        method to block a user.
+
+        returns None if blocking user has already blocked blocked_user, otherwise it returns blacklist object
+        
+        """
+        try:
+            return Blacklist.objects.create(**{'blocking_user':blocking_user, 'blocked_user':blocked_user})
+        except IntegrityError:
+            return None
