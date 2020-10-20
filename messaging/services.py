@@ -135,7 +135,7 @@ class MessageService:
     @staticmethod
     def get_all_messages_of_user(user):
         """
-        returns all messages of the user
+        returns all messages of the user(sent and received messages)
         """
         return MessageService.get_all_sent_messages_of_user(user) | MessageService.get_all_received_messages_of_user(user)
 

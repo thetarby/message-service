@@ -89,7 +89,7 @@ class UserRegisterSerializer(serializers.Serializer):
         data=self.validated_data
         with transaction.atomic():
             user=get_user_model().objects.create_user(data['username'], data.get('email_address', None), data['password'])
-            user.first_name=data.get('first_name', None)
-            user.last_name=data.get('first_name', None)
+            user.first_name=data.get('first_name', user.first_name)
+            user.last_name=data.get('last_name', user.last_name)
             user=user.save()
         return user 

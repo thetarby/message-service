@@ -25,7 +25,7 @@ class ObtainExpiringAuthToken(generics.CreateAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            token = UserService.generate_token_for_user(request.user)
+            token = UserService.generate_token_for_user(serializer.validated_data['user'])
             return Response({'token': token.key})
 
         attempted_account=get_user_model().objects.filter(username=request.data['username']).first()
