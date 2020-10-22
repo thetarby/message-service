@@ -1,4 +1,4 @@
-# Prod branch has a more production ready configuration. In this branch it serves django with gunicorn and uses nginx as a proxy and to serve static files for browsable api. Other than that it is the same. This branch is experimental and not tested thoroughly.
+# Prod branch has a more production ready configuration. In this branch it serves django with gunicorn and uses nginx as a proxy and to serve static files for browsable api. Other than that it is the same. This branch is experimental and not tested thoroughly. It builds with `docker-compose -f docker-compose-prod.yml up --build` instead of `docker-compose up`
 
 # MessageService
 MessageService is a self contained web service utilizing rest api concepts. You can register users, login and users can send messages or block each other. MessageService uses postgres as database and django as the backend framework. It runs in docker.
