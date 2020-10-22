@@ -1,0 +1,29 @@
+version: "3.8"
+   
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: ./app
+    command: bash -c "while !</dev/tcp/db/5432; do sleep 1; done; python manage.py migrate && python manage.py populate && gunicorn message_service.wsgi:application --bind 0.0.0.0:8000 --workers=2"
+    volumes:
+      - static_volume:/code/static
+    expose:
+      - "8000"
+    depends_on:
+      - db
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/code/static
+    ports:
+      - 8000:80
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
