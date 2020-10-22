@@ -32,9 +32,10 @@ MessageService obeys rest api standards hence all successful requests responds w
 MessageService supports two different authentication schemes.
 - Session Authentication: Used to authenticate in browsable api.
 - Token Authentication: For all other use cases
+
 Session authentication works with cookies. When you login from browser all necessary fields are set in cookies and sent to server at each request.
 
-Token authentication is for all other use cases. A post request with username and password to `/users/login` will return a token. That token should be added to Authorization header with a 'Token ' prefix (such as `Token aaabbb111bbbccc`) should be added to all requests that requires authentication. 
+Token authentication is for all other use cases. A post request with username and password to `/users/login` will return a token. That token should be added to Authorization header with a 'Token ' prefix (such as `Token aaabbb111bbbccc`) for all requests that requires authentication. 
 
 When a request is made, MessageService checks whether needed fields are set in the cookies for session authentication. If they are set, session authentication scheme is used otherwise token authentication is used.
 
