@@ -567,6 +567,46 @@ Unblocks a user.
 	--data-raw ''
   ```
 
+
+## Display activities
+----
+MesageService records activities such as invalid login attempts, sending messages etc... This endpoint lists them in a human readable form.
+
+* **URL:**
+/activity/all
+
+* **Method:**
+  `GET`
+  
+* **Authentication:**
+  Required.
+	- TokenAuthentication
+	- SessionAuthentication
+  
+* **Success Response:**
+
+    **Code:** `200 OK`
+
+* **Error Response:**
+
+    **Code:** `401 UNAUTHORIZED`
+    **Content:** ```json
+    {
+      "activities": [
+          "user0 sent Message object (1) on user2 0 minutes ago"
+      ]
+    }
+    ```
+
+
+* **Sample Curl Call:**
+
+  ```shell
+	curl --location --request DELETE 'http://localhost:8000/messaging/api/blacklist/user' \
+	--header 'Authorization: Token c842119167194f5a3a2ab781882aa744357c6727' \
+	--data-raw ''
+  ```
+
 License
 ----
 
