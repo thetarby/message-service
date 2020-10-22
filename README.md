@@ -20,6 +20,9 @@ $ docker-compose up
 ```
 As soon as docker containers are up and running, MessageService starts to run on localhost:8000. It has a browsable api too so that you can check it out by going `localhost:8000/messaging/api` and try from browser. At startup MessageService populates database with 10 default users with usernames user0, user1... all of which has the same password `pass12345`.
 
+## Tests
+Most of the functionality in services are tested with test cases. Tests could be run inside the container with the command `python manage.py test`
+
 ## About Rest Api
 MessageService has a browsable api which means you can
 - go to `http://localhost:8000/messaging/api` in your browser
