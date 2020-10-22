@@ -151,6 +151,13 @@ Lists both received and sent messages of the user
 * **URL:**
 /messaging/api/message
 
+* **URL Parameters:**
+optional filter parameters can be passed to url like:
+    - `/messaging/api/message?only_received=True`: Lists only received messages
+    - `/messaging/api/message?only_sent=True`: Lists only sent messages
+    - `/messaging/api/message?since=2020-10-22T12:44:08.823581Z`: List messages sent after the datetime string
+    - `/messaging/api/message?until=2020-10-22T12:44:08.823581Z`: List messages sent before the datetime string
+    - `/messaging/api/message?until=2020-10-22T12:44:08.823581Z&only_sent=True`: filters can be anded
 * **Method:**
 
   `GET`
@@ -590,7 +597,8 @@ MesageService records activities such as invalid login attempts, sending message
 * **Error Response:**
 
     **Code:** `401 UNAUTHORIZED`
-    **Content:** ```json
+    **Content:** 
+    ```json
     {
       "activities": [
           "user0 sent Message object (1) on user2 0 minutes ago"
@@ -602,9 +610,8 @@ MesageService records activities such as invalid login attempts, sending message
 * **Sample Curl Call:**
 
   ```shell
-	curl --location --request DELETE 'http://localhost:8000/messaging/api/blacklist/user' \
-	--header 'Authorization: Token c842119167194f5a3a2ab781882aa744357c6727' \
-	--data-raw ''
+    curl --location --request GET 'http://localhost:8000/activity/all' \
+    --header 'Authorization: Token 5ed9a1a9c11cc11688d5665ae703c8ca68777079'
   ```
 
 License

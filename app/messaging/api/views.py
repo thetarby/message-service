@@ -68,7 +68,6 @@ class MessageViewSet(  mixins.CreateModelMixin,
         """
         creates a new message. it does the same thing as sending a message
         """
-        print('JKALJDSKHLJLKASDJASKLJDKŞLASKDSKAŞLDKASLD', request.data)
         serializer=SlugRelatedMessageSerializer(data={
             'to_user':request.data['to_user'],
             'from_user':request.user.username,
@@ -106,7 +105,7 @@ class Conversation(viewsets.ViewSet):
     
     def get_serializer_class(self):
             if self.action == 'retrieve':
-                return MessageSerializer
+                return SlugRelatedMessageSerializer
             elif self.action == 'list':
                 return ConversationSerializer
             elif self.action == 'send_message':
