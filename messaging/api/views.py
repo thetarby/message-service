@@ -101,7 +101,6 @@ class Conversation(viewsets.ViewSet):
     """
     permission_classes= (IsAuthenticated,)
     authentication_classes=(TokenAuthentication, SessionAuthentication, )
-    
     # lookup field when configuring the url with a router
     lookup_field='username'
     
