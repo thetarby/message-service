@@ -18,7 +18,7 @@ $ git clone https://github.com/thetarby/message-service.git
 $ cd message-service
 $ docker-compose up
 ```
-As soon as docker containers are up and running, MessageService starts to run on localhost:8000. It has a browsable api too so that you can check it out and try from browser.
+As soon as docker containers are up and running, MessageService starts to run on localhost:8000. It has a browsable api too so that you can check it out by going `localhost:8000/messaging/api` and try from browser. At startup MessageService populates database with 10 default users with usernames user0, user1... all of which has the same password `pass12345`.
 
 ## About Rest Api
 MessageService has a browsable api which means you can
