@@ -593,10 +593,6 @@ MesageService records activities such as invalid login attempts, sending message
 * **Success Response:**
 
     **Code:** `200 OK`
-
-* **Error Response:**
-
-    **Code:** `401 UNAUTHORIZED`
     **Content:** 
     ```json
     {
@@ -605,6 +601,9 @@ MesageService records activities such as invalid login attempts, sending message
       ]
     }
     ```
+* **Error Response:**
+
+    **Code:** `401 UNAUTHORIZED`
 
 
 * **Sample Curl Call:**
