@@ -24,7 +24,7 @@ SECRET_KEY = 't1*gu2%(2g=p!a6!(z3%3ctc86s1))v3aktch!y$#!+($kfr+6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','127.0.0.1']
 
 
 # Application definition
